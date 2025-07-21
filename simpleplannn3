@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plans | Meta Interest Finder Tool</title>
+    
+    <!-- Razorpay Script -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    
+    <style id="darkStyle">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a202c;
+            color: #e2e8f0;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            background: #2d3748;
+            padding: 15px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            border: 1px solid #4a5568;
+        }
+
+        .welcome-text {
+            font-size: 28px;
+            font-weight: 700;
+            color: #e2e8f0;
+        }
+
+        .welcome-text span {
+            color: #ff6b6b;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .plan-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #4a5568;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            border: 1px solid #718096;
+        }
+
+        .plan-badge {
+            background: #ff6b6b;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .searches-left {
+            color: #68d391;
+            font-weight: 600;
+        }
+
+        .upgrade-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(102, 126, 234, 0.3);
+        }
+
+        .upgrade-btn:hover {
+            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .profile-section {
+            position: relative;
+            z-index: 1002;
+        }
+
+        .profile-btn {
+            background: #4a5568;
+            border: 1px solid #718096;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            color: #e2e8f0;
+        }
+
+        .profile-btn:hover {
+            background: #718096;
+            border-color: #a0aec0;
+        }
+
+        .profile-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #2d3748;
+            border-radius: 8px;
+            padding: 8px 0;
+            min-width: 220px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            border: 1px solid #4a5568;
+            z-index: 10000;
+            display: none;
+        }
+
+        .dropdown.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #cbd5e0;
+            text-decoration: none;
+            user-select: none;
+        }
+
+        .dropdown-item:hover {
+            background: #4a5568;
+            color: #e2e8f0;
+        }
+
+        .dropdown-item.active {
+            background: #3182ce;
+            color: #e2e8f0;
+        }
+
+        .dropdown-separator {
+            height: 1px;
+            background: #4a5568;
+            margin: 8px 0;
+        }
+
+        .theme-toggle-btn {
+            background: #4a5568;
+            border: 1px solid #718096;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle-btn:hover {
+            background: #718096;
+            border-color: #a0aec0;
+        }
+
+        .theme-toggle-btn img {
+            width: 24px;
+            height: 24px;
+            filter: invert(1);
+        }
+
+        /* Plans Section */
+        .plans-section {
+            background: #2d3748;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            border: 1px solid #4a5568;
+        }
+
+        .plans-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .plans-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #e2e8f0;
+            margin-bottom: 16px;
+        }
+
+        .plans-subtitle {
+            font-size: 18px;
+            color: #a0aec0;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .plans-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 24px;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .plan-card {
+            width: 290px;
+            flex-shrink: 0;
+            background: #4a5568;
+            border: 1px solid #718096;
+            border-radius: 12px;
+            padding: 32px 24px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            border-color: #a0aec0;
+        }
+
+        .plan-card.popular {
+            border-color: #ff6b6b;
+            background: linear-gradient(135deg, #4a5568 0%, #5a6374 100%);
+        }
+
+        .plan-card.popular::before {
+            content: "Most Popular";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+            padding: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .plan-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #e2e8f0;
+            margin-bottom: 8px;
+        }
+
+        .plan-price {
+            font-size: 32px;
+            font-weight: 700;
+            color: #ff6b6b;
+            margin-bottom: 4px;
+        }
+
+        .plan-duration {
+            font-size: 14px;
+            color: #a0aec0;
+            margin-bottom: 24px;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-bottom: 32px;
+        }
+
+        .plan-features li {
+            padding: 8px 0;
+            color: #cbd5e0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .plan-features li::before {
+            content: "✓";
+            color: #68d391;
+            font-weight: 600;
+        }
+
+        .plan-btn {
+            width: 100%;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .plan-btn.primary {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+            box-shadow: 0 4px 6px rgba(255, 107, 107, 0.3);
+        }
+
+        .plan-btn.primary:hover {
+            background: linear-gradient(135deg, #ee5a52 0%, #e53e3e 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(255, 107, 107, 0.4);
+        }
+
+        .plan-btn.secondary {
+            background: #4a5568;
+            color: #e2e8f0;
+            border: 1px solid #718096;
+        }
+
+        .plan-btn.secondary:hover {
+            background: #718096;
+            border-color: #a0aec0;
+        }
+
+        .plan-btn.current {
+            background: #276749;
+            color: #68d391;
+            border: 1px solid #38a169;
+            cursor: default;
+        }
+
+        .plan-btn.current:hover {
+            background: #276749;
+            transform: none;
+        }
+
+        .toast {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            background: #38a169;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            z-index: 10003;
+            transform: translateX(400px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            font-weight: 500;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            background: #e53e3e;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 16px;
+                padding: 20px;
+            }
+            
+            .plans-section {
+                padding: 20px;
+            }
+            
+            .plans-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .plans-title {
+                font-size: 28px;
+            }
+        }
+    </style>
+
+    <!-- Light theme styles (same as before but omitted for brevity) -->
+     <style id="lightStyle" disabled>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8fafc;
+            color: #1a202c;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            background: #ffffff;
+            padding: 15px 30px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+
+        .welcome-text {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .welcome-text span {
+            color: #3182ce;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .plan-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #f7fafc;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .plan-badge {
+            background: #3182ce;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .searches-left {
+            color: #38a169;
+            font-weight: 600;
+        }
+
+        .upgrade-btn {
+            background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(49, 130, 206, 0.2);
+        }
+
+        .upgrade-btn:hover {
+            background: linear-gradient(135deg, #2c5282 0%, #2a4365 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(49, 130, 206, 0.3);
+        }
+
+        .profile-section {
+            position: relative;
+            z-index: 1002;
+        }
+
+        .profile-btn {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .profile-btn:hover {
+            background: #edf2f7;
+            border-color: #cbd5e0;
+        }
+
+        .profile-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 8px 0;
+            min-width: 220px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border: 1px solid #e2e8f0;
+            z-index: 10000;
+            display: none;
+        }
+
+        .dropdown.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #4a5568;
+            text-decoration: none;
+            user-select: none;
+        }
+
+        .dropdown-item:hover {
+            background: #f7fafc;
+            color: #2d3748;
+        }
+
+        .dropdown-item.active {
+            background: #e6fffa;
+            color: #3182ce;
+        }
+
+        .dropdown-separator {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 8px 0;
+        }
+
+        .theme-toggle-btn {
+            background: #edf2f7;
+            border: 1px solid #cbd5e0;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .theme-toggle-btn img {
+            width: 24px;
+            height: 24px;
+            filter: invert(0);
+        }
+
+        /* Plans Section */
+        .plans-section {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+
+        .plans-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .plans-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 16px;
+        }
+
+        .plans-subtitle {
+            font-size: 18px;
+            color: #718096;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+.plans-grid {
+            display: flex;
+           flex-wrap: wrap;
+            justify-content: center;
+            gap: 24px;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .plan-card {
+            width: 290px;
+            flex-shrink: 0;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 32px 24px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-color: #cbd5e0;
+        }
+
+        .plan-card.popular {
+            border-color: #3182ce;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        }
+
+        .plan-card.popular::before {
+            content: "Most Popular";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+            color: white;
+            padding: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .plan-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .plan-price {
+            font-size: 32px;
+            font-weight: 700;
+            color: #3182ce;
+            margin-bottom: 4px;
+        }
+
+        .plan-duration {
+            font-size: 14px;
+            color: #718096;
+            margin-bottom: 24px;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-bottom: 32px;
+        }
+
+        .plan-features li {
+            padding: 8px 0;
+            color: #4a5568;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .plan-features li::before {
+            content: "✓";
+            color: #38a169;
+            font-weight: 600;
+        }
+
+        .plan-btn {
+            width: 100%;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .plan-btn.primary {
+            background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+            color: white;
+            box-shadow: 0 2px 4px rgba(49, 130, 206, 0.2);
+        }
+
+        .plan-btn.primary:hover {
+            background: linear-gradient(135deg, #2c5282 0%, #2a4365 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(49, 130, 206, 0.3);
+        }
+
+        .plan-btn.secondary {
+            background: #f7fafc;
+            color: #2d3748;
+            border: 1px solid #e2e8f0;
+        }
+
+        .plan-btn.secondary:hover {
+            background: #edf2f7;
+            border-color: #cbd5e0;
+        }
+
+        .plan-btn.current {
+            background: #f0fff4;
+            color: #38a169;
+            border: 1px solid #c6f6d5;
+            cursor: default;
+        }
+
+        .plan-btn.current:hover {
+            background: #f0fff4;
+            transform: none;
+        }
+
+        .toast {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            background: #38a169;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            z-index: 10003;
+            transform: translateX(400px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            font-weight: 500;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            background: #e53e3e;
+        }
+
+        button:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 16px;
+                padding: 20px;
+            }
+            
+            .plans-section {
+                padding: 20px;
+            }
+            
+            .plans-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .plans-title {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="welcome-text">
+                <span>👋</span> Hi, <span id="userName">Loading...</span>
+            </div>
+            <div class="header-right">
+                <div class="plan-info">
+                    <span class="plan-badge" id="planBadge">Free</span>
+                    <span class="searches-left" id="searchesLeft">Unlimited searches</span>
+                </div>
+               
+                <button class="theme-toggle-btn" id="themeToggleBtn">
+                    <img id="themeIcon" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='5'/%3E%3Cline x1='12' y1='1' x2='12' y2='3'/%3E%3Cline x1='12' y1='21' x2='12' y2='23'/%3E%3Cline x1='4.22' y1='4.22' x2='5.64' y2='5.64'/%3E%3Cline x1='18.36' y1='18.36' x2='19.78' y2='19.78'/%3E%3Cline x1='1' y1='12' x2='3' y2='12'/%3E%3Cline x1='21' y1='12' x2='23' y2='12'/%3E%3Cline x1='4.22' y1='19.78' x2='5.64' y2='18.36'/%3E%3Cline x1='18.36' y1='5.64' x2='19.78' y2='4.22'/%3E%3C/svg%3E" alt="Toggle Theme" />
+                </button>
+
+                <div class="profile-section">
+                    <button class="profile-btn" id="profileBtn">
+                        <img id="profileImage" src="" alt="Profile" style="display: none;">
+                        <span id="profileInitial">D</span>
+                    </button>
+                    <div class="dropdown" id="dropdown">
+                        <div class="dropdown-item" style="pointer-events: none;">
+                            <img src="" id="dropdownProfileImage" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+                            <div>
+                                <div style="font-weight: 600;" id="dropdownName">Dinesh</div>
+                                <div style="font-size: 12px; opacity: 0.7;" id="dropdownEmail">dinesh@email.com</div>
+                            </div>
+                        </div>
+                        <div class="dropdown-separator"></div>
+                        <div class="dropdown-item" onclick="window.location.href='dashboard.html'">
+                            <span>Home</span>
+                        </div>
+                        <div class="dropdown-item active">
+                            <span>Plans</span>
+                        </div>
+                        <div class="dropdown-item" onclick="window.location.href='profile.html'">
+                            <span>Profile</span>
+                        </div>
+ <div class="dropdown-item" onclick="window.location.href='contact.html'">
+                            <span> Need Help
+ </div>
+                        <div class="dropdown-separator"></div>
+                        <div class="dropdown-item" onclick="logout()">
+                            Logout
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" style="margin-left: 8px;" viewBox="0 0 24 24">
+                                <path d="M16 17l1.41-1.41L13.83 12l3.58-3.59L16 7l-5 5 5 5zM20 3H4c-1.1 0-2 .9-2 2v4h2V5h16v14H4v-4H2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="plans-section">
+            <div class="plans-header">
+                <h1 class="plans-title">Choose Your Plan</h1>
+                <p class="plans-subtitle">Select the perfect plan for your Facebook interest research needs. All plans include direct interest downloads and our powerful search engine.</p>
+            </div>
+
+            <div class="plans-grid">
+                <!-- Free Plan -->
+                <div class="plan-card">
+                    <h3 class="plan-name">Free</h3>
+                    <div class="plan-price">₹0</div>
+                    <div class="plan-duration">Forever</div>
+                    <ul class="plan-features">
+                        <li>3 searches per day</li>
+                        <li>Interest direct download</li>
+                        <li>Basic support</li>
+                        <li>No subscription required</li>
+                    </ul>
+                    <button class="plan-btn current" id="freePlanBtn">Current Plan</button>
+                </div>
+
+                <!-- Monthly Plan -->
+                <div class="plan-card popular">
+                    <h3 class="plan-name">Monthly</h3>
+                    <div class="plan-price">₹499</div>
+                    <div class="plan-duration">Per month</div>
+                    <ul class="plan-features">
+                        <li>Unlimited searches</li>
+                        <li>Interest direct download</li>
+                        <li>Priority support</li>
+                        <li>Monthly subscription</li>
+                    </ul>
+                    <button class="plan-btn primary" onclick="selectPlan('monthly')">Choose Monthly</button>
+                </div>
+
+                <!-- Yearly Plan -->
+                <div class="plan-card">
+                    <h3 class="plan-name">Yearly</h3>
+                    <div class="plan-price">₹3,499</div>
+                    <div class="plan-duration">Per year</div>
+                    <ul class="plan-features">
+                        <li>Unlimited searches</li>
+                        <li>Interest direct download</li>
+                        <li>Priority support</li>
+                        <li>Yearly subscription</li>
+                    </ul>
+                    <button class="plan-btn secondary" onclick="selectPlan('yearly')">Choose Yearly</button>
+                </div>
+
+                <!-- Lifetime Plan -->
+                <div class="plan-card">
+                    <h3 class="plan-name">Lifetime</h3>
+                    <div class="plan-price">₹9,999</div>
+                    <div class="plan-duration">One-time cost</div>
+                    <ul class="plan-features">
+                        <li>Unlimited searches</li>
+                        <li>Interest direct download</li>
+                        <li>Priority support</li>
+                        <li>Lifetime access</li>
+                    </ul>
+                    <button class="plan-btn secondary" onclick="selectPlan('lifetime')">Choose Lifetime</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Complete JavaScript with Razorpay Integration -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB-wOqU0JnvWM3Nt91xhac2x_qO5a54GMQ",
+            authDomain: "dinesh-3b413.firebaseapp.com",
+            projectId: "dinesh-3b413",
+            storageBucket: "dinesh-3b413.firebasestorage.app",
+            messagingSenderId: "1053189064237",
+            appId: "1:1053189064237:web:d261dbebb5e7299e829aa4",
+            measurementId: "G-FPVH4NC1ML"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const analytics = getAnalytics(app);
+
+        // Razorpay configuration
+        const RAZORPAY_KEY = 'rzp_test_hLUFECdHvYfSm6';
+
+        // Plan prices configuration
+        const PLAN_PRICES = {
+            monthly: 499,
+            yearly: 3499,
+            lifetime: 9999
+        };
+
+        // DOM elements
+        const profileBtn = document.getElementById('profileBtn');
+        const dropdown = document.getElementById('dropdown');
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const themeIcon = document.getElementById('themeIcon');
+        const userName = document.getElementById('userName');
+        const planBadge = document.getElementById('planBadge');
+        const searchesLeft = document.getElementById('searchesLeft');
+        const toast = document.getElementById('toast');
+
+        // Theme icons
+        const sunIcon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='5'/%3E%3Cline x1='12' y1='1' x2='12' y2='3'/%3E%3Cline x1='12' y1='21' x2='12' y2='23'/%3E%3Cline x1='4.22' y1='4.22' x2='5.64' y2='5.64'/%3E%3Cline x1='18.36' y1='18.36' x2='19.78' y2='19.78'/%3E%3Cline x1='1' y1='12' x2='3' y2='12'/%3E%3Cline x1='21' y1='12' x2='23' y2='12'/%3E%3Cline x1='4.22' y1='19.78' x2='5.64' y2='18.36'/%3E%3Cline x1='18.36' y1='5.64' x2='19.78' y2='4.22'/%3E%3C/svg%3E";
+        const moonIcon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z'/%3E%3C/svg%3E";
+
+        // Theme management
+        let isDarkMode = false;
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            toast.textContent = message;
+            toast.className = `toast ${type}`;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize theme on page load
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                isDarkMode = savedTheme === 'dark';
+            } else {
+                isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            }
+            applyTheme();
+        }
+
+        // Apply theme to document
+        function applyTheme() {
+            const darkStyle = document.getElementById("darkStyle");
+            const lightStyle = document.getElementById("lightStyle");
+            
+            if (isDarkMode) {
+                darkStyle.disabled = false;
+                lightStyle.disabled = true;
+                themeIcon.src = sunIcon;
+                themeIcon.alt = 'Switch to light mode';
+            } else {
+                darkStyle.disabled = true;
+                lightStyle.disabled = false;
+                themeIcon.src = moonIcon;
+                themeIcon.alt = 'Switch to dark mode';
+            }
+            
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+        }
+
+        // Toggle theme
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            applyTheme();
+            showToast(isDarkMode ? 'Dark mode enabled' : 'Light mode enabled', 'success');
+        }
+
+        // Razorpay options configuration
+        function createRazorpayOptions(amount, planType, userDetails) {
+            return {
+                key: RAZORPAY_KEY,
+                amount: amount * 100, // Amount in paise
+                currency: 'INR',
+                name: 'Meta Interest Finder Tool',
+                description: `${planType.charAt(0).toUpperCase() + planType.slice(1)} Plan Subscription`,
+                image: 'https://your-logo-url.com/logo.png', // Optional: Add your logo
+                prefill: {
+                    name: userDetails.name,
+                    email: userDetails.email,
+                    contact: userDetails.phone || ''
+                },
+                notes: {
+                    plan_type: planType,
+                    user_id: userDetails.uid
+                },
+                theme: {
+                    color: '#3182ce'
+                },
+                handler: function(response) {
+                    handlePaymentSuccess(response, planType);
+                },
+                modal: {
+                    ondismiss: function() {
+                        showToast('Payment cancelled', 'error');
+                    },
+                    escape: true,
+                    backdropclose: false
+                }
+            };
+        }
+
+        // Handle successful payment
+        async function handlePaymentSuccess(paymentResponse, planType) {
+            try {
+                showToast('Payment successful! Updating your plan...', 'success');
+                
+                const user = auth.currentUser;
+                if (!user) return;
+
+                const userDocRef = doc(db, 'users', user.uid);
+                const userDoc = await getDoc(userDocRef);
+                const currentData = userDoc.exists() ? userDoc.data() : {};
+
+                // Calculate plan expiry based on plan type and current expiry
+                let newPlanExpiry = null;
+                const currentExpiry = currentData.planExpiry;
+                const today = new Date();
+
+                if (planType === 'monthly') {
+                    const baseDate = currentExpiry && currentExpiry !== null && new Date(currentExpiry) > today 
+                        ? new Date(currentExpiry) 
+                        : today;
+                    newPlanExpiry = new Date(baseDate.getTime() + (30 * 24 * 60 * 60 * 1000));
+                } else if (planType === 'yearly') {
+                    const baseDate = currentExpiry && currentExpiry !== null && new Date(currentExpiry) > today 
+                        ? new Date(currentExpiry) 
+                        : today;
+                    newPlanExpiry = new Date(baseDate.getTime() + (365 * 24 * 60 * 60 * 1000));
+                } else if (planType === 'lifetime') {
+                    newPlanExpiry = null; // Lifetime plan has no expiry
+                }
+
+                // Update user plan in Firestore
+                await updateDoc(userDocRef, {
+                    currentPlan: planType,
+                    planExpiry: newPlanExpiry,
+                    searchesUsed: 0, // Reset searches
+                    lastSearchDate: null, // Reset search date
+                    paymentDetails: {
+                        razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                        razorpay_order_id: paymentResponse.razorpay_order_id || '',
+                        razorpay_signature: paymentResponse.razorpay_signature || '',
+                        amount: PLAN_PRICES[planType],
+                        currency: 'INR',
+                        planType: planType,
+                        purchaseDate: new Date(),
+                        status: 'completed'
+                    },
+                    updatedAt: new Date()
+                });
+
+                // Update UI
+                updatePlanDisplay(planType);
+                
+                showToast(`${planType.charAt(0).toUpperCase() + planType.slice(1)} plan activated successfully!`, 'success');
+                
+                // Optional: Redirect to dashboard after success
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 2000);
+
+            } catch (error) {
+                console.error('Error updating plan:', error);
+                showToast('Payment successful but plan update failed. Please contact support.', 'error');
+            }
+        }
+
+        // Handle payment errors
+        function handlePaymentError(error) {
+            console.error('Payment error:', error);
+            let errorMessage = 'Payment failed. Please try again.';
+            
+            if (error.code) {
+                switch (error.code) {
+                    case 'BAD_REQUEST_ERROR':
+                        errorMessage = 'Invalid payment details. Please try again.';
+                        break;
+                    case 'GATEWAY_ERROR':
+                        errorMessage = 'Payment gateway error. Please try again.';
+                        break;
+                    case 'NETWORK_ERROR':
+                        errorMessage = 'Network error. Please check your connection.';
+                        break;
+                    default:
+                        errorMessage = error.description || errorMessage;
+                }
+            }
+            
+            showToast(errorMessage, 'error');
+        }
+
+        // Select plan function with Razorpay integration
+        async function selectPlan(planType) {
+            try {
+                const user = auth.currentUser;
+                if (!user) {
+                    showToast('Please login first', 'error');
+                    return;
+                }
+
+                // Get user data
+                const userDocRef = doc(db, 'users', user.uid);
+                const userDoc = await getDoc(userDocRef);
+                const userData = userDoc.exists() ? userDoc.data() : {};
+
+                // Check if already on this plan or higher
+                const currentPlan = userData.currentPlan || 'free';
+                const planHierarchy = ['free', 'monthly', 'yearly', 'lifetime'];
+                
+                if (planHierarchy.indexOf(currentPlan) >= planHierarchy.indexOf(planType)) {
+                    showToast('You already have this plan or higher', 'error');
+                    return;
+                }
+
+                // Prepare payment
+                const amount = PLAN_PRICES[planType];
+                const userDetails = {
+                    uid: user.uid,
+                    name: user.displayName || userData.name || 'User',
+                    email: user.email,
+                    phone: userData.phone || ''
+                };
+
+                // Create Razorpay options
+                const options = createRazorpayOptions(amount, planType, userDetails);
+                
+                // Initialize Razorpay
+                const razorpay = new Razorpay(options);
+                
+                // Open payment modal
+                razorpay.open();
+
+            } catch (error) {
+                console.error('Error initiating payment:', error);
+                showToast('Payment initiation failed', 'error');
+                handlePaymentError(error);
+            }
+        }
+
+        // Check authentication state
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            loadUserProfile(user);
+        });
+
+        // Load user profile
+        async function loadUserProfile(user) {
+            try {
+                userName.textContent = user.displayName || 'User';
+                
+                // Load user data from Firestore
+                const userDocRef = doc(db, 'users', user.uid);
+                const userDoc = await getDoc(userDocRef);
+                
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    updatePlanDisplay(userData.currentPlan || 'free');
+                    
+                    // Update searches count if on free plan
+                    if (userData.currentPlan === 'free' || !userData.currentPlan) {
+                        const searchesUsed = userData.searchesUsed || 0;
+                        const searchesRemaining = Math.max(0, 3 - searchesUsed);
+                        searchesLeft.textContent = `${searchesRemaining}/3 searches`;
+                    }
+                } else {
+                    // Create user document if it doesn't exist
+                    await updateDoc(userDocRef, {
+                        name: user.displayName || 'User',
+                        email: user.email,
+                        currentPlan: 'free',
+                        searchesUsed: 0,
+                        lastSearchDate: new Date().toISOString().split('T')[0],
+                        createdAt: new Date(),
+                        updatedAt: new Date()
+                    });
+                    updatePlanDisplay('free');
+                }
+
+                // Update profile image
+                const profileImage = document.getElementById('profileImage');
+                const profileInitial = document.getElementById('profileInitial');
+                const dropdownProfileImage = document.getElementById('dropdownProfileImage');
+                
+                if (user.photoURL) {
+                    profileImage.src = user.photoURL;
+                    profileImage.style.display = 'block';
+                    profileInitial.style.display = 'none';
+                    dropdownProfileImage.src = user.photoURL;
+                } else {
+                    profileInitial.textContent = user.displayName ? user.displayName.charAt(0).toUpperCase() : 'U';
+                    profileImage.style.display = 'none';
+                    profileInitial.style.display = 'flex';
+                }
+
+                // Update dropdown info
+                document.getElementById('dropdownName').textContent = user.displayName || 'User';
+                document.getElementById('dropdownEmail').textContent = user.email || '';
+                
+            } catch (error) {
+                console.error('Error loading user profile:', error);
+                showToast('Error loading profile', 'error');
+            }
+        }
+
+        // Update plan display
+        function updatePlanDisplay(currentPlan) {
+            const planOrder = ['free', 'monthly', 'yearly', 'lifetime'];
+            const currentIndex = planOrder.indexOf(currentPlan);
+
+            // Update badge and search text
+            planBadge.textContent = currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1);
+            planBadge.className = 'plan-badge ' + currentPlan;
+            searchesLeft.textContent = currentPlan === 'free' ? '3/day searches' : 'Unlimited searches';
+
+            // Update plan cards
+            document.querySelectorAll('.plan-card').forEach(card => {
+                const planName = card.querySelector('.plan-name').textContent.toLowerCase();
+                const button = card.querySelector('.plan-btn');
+                const planIndex = planOrder.indexOf(planName);
+
+                // Show all cards but update their states
+                card.style.display = 'block';
+                button.disabled = false;
+                button.className = 'plan-btn';
+
+                if (planName === currentPlan) {
+                    // Current plan
+                    button.textContent = 'Current Plan';
+                    button.classList.add('current');
+                    button.disabled = true;
+                    button.onclick = null;
+                } else if (planIndex < currentIndex) {
+                    // Lower plans - hide
+                    card.style.display = 'none';
+                } else {
+                    // Higher plans - enable for upgrade
+                    button.textContent = currentPlan === 'free' ? 'Choose Plan' : 'Upgrade Plan';
+                    button.classList.add(planName === 'monthly' ? 'primary' : 'secondary');
+                    button.onclick = () => selectPlan(planName);
+                }
+            });
+        }
+
+        // Logout function
+        async function logout() {
+            try {
+                await signOut(auth);
+                window.location.href = 'login.html';
+            } catch (error) {
+                console.error('Error signing out:', error);
+                showToast('Error signing out', 'error');
+            }
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize theme
+            initializeTheme();
+            
+            // Profile dropdown toggle
+            profileBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('show');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!dropdown.contains(e.target) && !profileBtn.contains(e.target)) {
+                    dropdown.classList.remove('show');
+                }
+            });
+
+            // Theme toggle
+            const darkStyle = document.getElementById("darkStyle");
+            const lightStyle = document.getElementById("lightStyle");
+            const themeBtn = document.getElementById("themeToggleBtn");
+            const themeIcon = document.getElementById("themeIcon");
+
+            // Theme Setup
+            const savedTheme = localStorage.getItem("theme");
+
+            // If user has previously selected a theme
+            if (savedTheme) {
+                if (savedTheme === "light") {
+                    darkStyle.disabled = true;
+                    lightStyle.disabled = false;
+                    themeIcon.src = moonIcon;
+                } else {
+                    darkStyle.disabled = false;
+                    lightStyle.disabled = true;
+                    themeIcon.src = sunIcon;
+                }
+            } else {
+                // Default to dark theme on first visit
+                darkStyle.disabled = false;
+                lightStyle.disabled = true;
+                themeIcon.src = sunIcon;
+                localStorage.setItem("theme", "dark");
+            }
+
+            themeBtn.addEventListener("click", () => {
+                const isCurrentlyDark = !darkStyle.disabled;
+
+                // Toggle theme styles
+                darkStyle.disabled = isCurrentlyDark;
+                lightStyle.disabled = !isCurrentlyDark;
+
+                // Update icon
+                if (isCurrentlyDark) {
+                    themeIcon.src = moonIcon; // Going to light, show moon icon
+                    localStorage.setItem("theme", "light");
+                } else {
+                    themeIcon.src = sunIcon; // Going to dark, show sun icon
+                    localStorage.setItem("theme", "dark");
+                }
+            });
+
+            // Store original button texts
+            document.querySelectorAll('.plan-btn').forEach(btn => {
+                if (!btn.textContent.includes('Current')) {
+                    btn.setAttribute('data-original-text', btn.textContent);
+                }
+            });
+        });
+
+        // Make functions available globally
+        window.selectPlan = selectPlan;
+        window.logout = logout;
+
+        // Listen for system theme changes
+        if (window.matchMedia) {
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                if (!localStorage.getItem('theme')) {
+                    isDarkMode = e.matches;
+                    applyTheme();
+                }
+            });
+        }
+    </script>
+</body>
+</html>
